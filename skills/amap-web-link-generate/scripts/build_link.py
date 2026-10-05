@@ -17,7 +17,7 @@ data.json 内容 = travel_plan.html 的 data 数组（POI/route 混排），如:
 --cleanup: 交付成功（三查通过）后自动删除输入的临时 data.json；三查未过/未验证时保留；
            位于技能目录内的输入文件（如 examples/ 示例）一律拒删，防误伤
 """
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 import io
 import json
@@ -32,6 +32,7 @@ BASE_URL_HTTPS = "https://a.amap.com/jsapi_demo_show/static/openclaw/travel_plan
 BASE_URL_HTTP = "http://a.amap.com/jsapi_demo_show/static/openclaw/travel_plan.html?data="
 EXPECTED_TITLE = "兴趣点与路线规划展示"
 LOGIN_WALL_KEYWORDS = ("login", "登录", "passport")
+MAX_LINK_CHARS = 8192  # 8KB 上限：超过后经聊天客户端复制/跳转被截断的风险显著上升
 
 
 def build_link(data, scheme="https"):
@@ -118,6 +119,9 @@ def main():
     n_route = sum(1 for d in data if d.get("type") == "route")
     link = build_link(data, scheme=scheme)
     print(f"[build] 协议={scheme} 数据: {len(data)} 项 (poi={n_poi}, route={n_route})，链接长度 {len(link)} 字符")
+    if len(link) > MAX_LINK_CHARS:
+        print(f"[warn] 链接长度 {len(link)} 字符，已超 8KB 上限：经聊天客户端复制/跳转被截断的风险高"
+              f"（超长打不开=「解析数据失败」），建议精简配文或拆成多条链接")
 
     # 结构预检：transfer 必带 city / routeType 白名单 / poi 坐标格式
     problems = []
