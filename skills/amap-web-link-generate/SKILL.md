@@ -1,6 +1,6 @@
 ---
 name: amap-web-link-generate
-version: 1.1.0
+version: 1.2.0
 description: 生成高德官方静态展示页的免key免登录地图分享链接，支持23类彩色图钉、驾车/步行/骑行/公交真实路线、弹窗富文本贴图。Use when user wants to 生成可分享地图链接、行程单、行程展示、路线展示页，或提到 高德地图链接、travel_plan、打点、路线可视化、静态地图、地图分享、带图行程单。数据采集可用 amap-maps MCP、高德 REST API 或任意地理编码手段。
 metadata:
   requires:
@@ -36,11 +36,14 @@ metadata:
 ```bash
 python "<base_dir>/scripts/build_link.py" <data.json>            # 生成 + 三查验证
 python "<base_dir>/scripts/build_link.py" <data.json> --out link.txt   # 另存链接
+python "<base_dir>/scripts/build_link.py" <data.json> --cleanup        # 交付成功后自动删除临时 data.json
 python "<base_dir>/scripts/build_link.py" <data.json> --no-check       # 跳过网络验证（三查未过时可强制写盘）
 python "<base_dir>/scripts/build_link.py" <data.json> --http           # 页面链接用 http（贴 http-only 图床图片时用，见坑#2；默认 https）
 ```
 
 脚本自动完成：编码拼接 → 结构预检（transfer 缺 city / routeType 非法 / 坐标格式错都会报警）→ **交付三查**（HTTP 200 / 落点仍是 a.amap.com / 页面标题含「兴趣点与路线规划展示」/ 无登录墙字样）。**三查不过不得交付**——脚本会在三查未过/网络验证失败时**自动拦截 `--out` 写盘**，确要强制导出才加 `--no-check`。
+
+🧹 **临时文件卫生**：data.json 属于中间产物，交付成功后无需保留——加 `--cleanup` 让脚本在三查通过后自动删除（三查未过/未验证时保留现场便于修复重跑；位于技能目录内的文件如 examples/ 示例一律拒删）。**一次性行程数据建议默认带上 `--cleanup`**；需要反复改配文重新生成的数据可先不带，定稿后最后一次生成时再加。
 
 ### Step 4 — 交付
 

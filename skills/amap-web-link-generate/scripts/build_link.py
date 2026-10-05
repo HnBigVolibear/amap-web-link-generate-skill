@@ -3,7 +3,7 @@
 高德静态地图链接生成器（amap-map-link skill 核心工具）
 
 用法:
-    python build_link.py <data.json> [--no-check] [--out link.txt] [--http]
+    python build_link.py <data.json> [--no-check] [--out link.txt] [--http] [--cleanup]
 
 data.json 内容 = travel_plan.html 的 data 数组（POI/route 混排），如:
     [
@@ -14,11 +14,14 @@ data.json 内容 = travel_plan.html 的 data 数组（POI/route 混排），如:
 流程: JSON -> UTF-8 -> encodeURIComponent 等价编码 -> 拼演示页 -> GET 三查
 三查: HTTP 200 / 页面标题含「兴趣点与路线规划展示」/ 正文无登录墙字样
 三查不过 = 链接不可交付（服务端 200 不等于用户能打开）
+--cleanup: 交付成功（三查通过）后自动删除输入的临时 data.json；三查未过/未验证时保留；
+           位于技能目录内的输入文件（如 examples/ 示例）一律拒删，防误伤
 """
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 import io
 import json
+import os
 import sys
 from urllib.parse import quote
 
@@ -74,8 +77,9 @@ def content_check(link):
 def main():
     args = sys.argv[1:]
     if not args or args[0].startswith("--"):
-        print("用法: python build_link.py <data.json> [--no-check] [--out link.txt] [--http]")
-        print("  --http  页面链接用 http 协议（贴 http-only 图床的图片时用；默认 https）")
+        print("用法: python build_link.py <data.json> [--no-check] [--out link.txt] [--http] [--cleanup]")
+        print("  --http     页面链接用 http 协议（贴 http-only 图床的图片时用；默认 https）")
+        print("  --cleanup  交付成功（三查通过）后自动删除输入的临时 data.json")
         sys.exit(1)
 
     json_path = args[0]
@@ -162,6 +166,22 @@ def main():
                 print(f"[out] 链接已另存: {out_path}")
             except OSError as e:
                 print(f"[out] 写盘失败: {e.strerror or e}（检查目录是否存在/有写权限）")
+
+    # 临时文件清理（--cleanup 显式开启；仅在三查通过时执行，保留失败现场便于修复重跑）
+    if "--cleanup" in args:
+        if check_ok is not True:
+            print(f"[cleanup] 三查未通过/未验证，跳过清理，保留 {json_path} 便于修复重跑")
+        else:
+            abs_path = os.path.abspath(json_path)
+            skill_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            if abs_path.startswith(skill_root + os.sep):
+                print(f"[cleanup] 输入文件位于技能目录内（{skill_root}），防误删示例/源文件已跳过清理")
+            else:
+                try:
+                    os.remove(abs_path)
+                    print(f"[cleanup] 已清理临时数据文件: {abs_path}")
+                except OSError as e:
+                    print(f"[cleanup] 清理失败: {e.strerror or e}")
 
 
 if __name__ == "__main__":
