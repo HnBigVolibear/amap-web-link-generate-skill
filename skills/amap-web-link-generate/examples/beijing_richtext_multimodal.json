@@ -1,0 +1,13 @@
+[
+  {"type": "poi", "lnglat": [116.397029, 39.917839], "sort": "科教文化服务", "text": "故宫博物院",
+   "remark": "【5A景区·世界遗产】评分4.9<br><b>旺季 08:30-17:00（周一闭馆）</b><br><img src='https://store.is.autonavi.com/showpic/2f968490d105bb2741e17f90b85c6b79' width='210'>"},
+  {"type": "route", "routeType": "transfer", "city": "北京",
+   "start": [116.397029, 39.917839], "end": [116.275179, 39.999617],
+   "remark": "🚌第①程公交+地铁(约92分钟)：步行约800米至神武门站→101/103路3站至西四路口东→西四站(B东北口)→地铁4号线13站至北宫门站(A西北口出)→步行约900米"},
+  {"type": "poi", "lnglat": [116.275179, 39.999617], "sort": "风景名胜", "text": "颐和园",
+   "remark": "【5A景区·皇家园林】评分4.9<br><b>开放 06:00-20:00（4-10月）</b><br><img src='https://store.is.autonavi.com/showpic/a4b326f43a84d36b581d7f6e856fe858' width='210'>"},
+  {"type": "route", "routeType": "driving", "start": [116.275179, 39.999617], "end": [116.412007, 39.913479],
+   "remark": "🚕第②程打车(约69分钟)：27.3公里，经北四环西路→万寿路→复兴路→长安街→东单"},
+  {"type": "poi", "lnglat": [116.412007, 39.913479], "sort": "购物服务", "text": "王府井步行街",
+   "remark": "【百年商业街】评分4.8<br><b>24小时开放</b><br><img src='https://store.is.autonavi.com/showpic/87df7eca6d6858bc0ba30baca710205f' width='210'>"}
+]
